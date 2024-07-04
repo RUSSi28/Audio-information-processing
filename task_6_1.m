@@ -1,10 +1,18 @@
-fid = fopen('o2.raw', 'r');
-y = fread(fid, 'int16');
-fclose(fid);
+% サンプリング周波数
+Fs = 16000; % 例: 44.1 kHz
 
-y_cut = y(10001:11024);
+% ノイズの長さ（秒）
+duration = 5; % 例: 5秒
 
-a = lpc(y_cut, 15);
+% サンプル数
+N = Fs * duration;
+
+% 白色雑音の生成
+white_noise = randn(1, N);
+
+cut = white_noise(1:1024);
+
+a = lpc(cut, 15);
 
 
 % インパルス信号の生成
@@ -25,15 +33,6 @@ for n = 1:impulse_length
         end
     end
 end
-% disp(h);
-% stem(h, 'filled');
-% freqz(h, 1, 500, 'half', 1);
 
-
-% ハミング窓を作成
-w = hamming(1024);
-fs = 16000;
-
-periodogram(y_cut, w, 1024, fs);
-hold on
-periodogram(h, w, 1024, fs)
+% periodogram(h, w, 1024, fs);
+sound(h, Fs);
